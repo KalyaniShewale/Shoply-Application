@@ -10,7 +10,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.kalyani.shewale.shoplyapplication.ui.screen.LoginScreen
+import com.kalyani.shewale.shoplyapplication.ui.screen.RegisterScreen
 import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,12 +22,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ShoplyApplicationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+               // LoginScreen(errorMessage = stringResource(R.string.error_login_failed))
+                RegisterScreen()
             }
         }
     }
