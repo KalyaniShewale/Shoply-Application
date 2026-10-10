@@ -55,31 +55,15 @@ fun AuthHeader(
             }
             Spacer(Modifier.height(16.dp))
         }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Medium
-        )
+        TitleText(title)
         Spacer(Modifier.height(4.dp))
-        Text(
-            text = subtitle,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        AppText(text = subtitle, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
 fun ErrorBanner(message: String, modifier: Modifier = Modifier) {
-    Text(
-        text = message,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.errorContainer, MaterialTheme.shapes.small)
-            .padding(12.dp),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onErrorContainer
-    )
+    CaptionText(message, Modifier.padding(horizontal = 12.dp))
 }
 
 
@@ -112,11 +96,8 @@ fun AuthFooter(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = prompt,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        AppText(text = prompt, color = MaterialTheme.colorScheme.onSurfaceVariant)
+
         TextButton(onClick = onActionClick) {
             Text(actionText, fontWeight = FontWeight.Medium)
         }

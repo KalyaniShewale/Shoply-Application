@@ -29,10 +29,15 @@ import androidx.compose.ui.unit.dp
 import com.kalyani.shewale.shoplyapplication.R
 import com.kalyani.shewale.shoplyapplication.model.Product
 import com.kalyani.shewale.shoplyapplication.model.SampleData
+import com.kalyani.shewale.shoplyapplication.ui.components.AppText
+import com.kalyani.shewale.shoplyapplication.ui.components.BodyText
+import com.kalyani.shewale.shoplyapplication.ui.components.CaptionText
 import com.kalyani.shewale.shoplyapplication.ui.components.FavoriteButton
 import com.kalyani.shewale.shoplyapplication.ui.components.ImageGallery
+import com.kalyani.shewale.shoplyapplication.ui.components.PriceText
 import com.kalyani.shewale.shoplyapplication.ui.components.PrimaryButton
 import com.kalyani.shewale.shoplyapplication.ui.components.SellerCard
+import com.kalyani.shewale.shoplyapplication.ui.components.TitleText
 import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
 
 
@@ -91,7 +96,7 @@ fun ProductDetailsScreen(
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
+                AppText(
                     text = stringResource(R.string.details_not_found),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -113,29 +118,13 @@ fun ProductDetailsScreen(
                     verticalAlignment = Alignment.Top
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = product.title,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Text(
-                            text = product.category,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        TitleText(product.title)
+                        CaptionText(product.category)
                     }
-                    Text(
-                        text = stringResource(R.string.price_format, product.price),
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    PriceText(product.price, style = MaterialTheme.typography.headlineSmall)
                 }
 
-                Text(
-                    text = product.description,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                BodyText(product.description)
 
                 // Recommended (FakeStore) products have no uploader, so this card is skipped
                 product.seller?.let { seller ->

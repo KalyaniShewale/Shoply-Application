@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kalyani.shewale.shoplyapplication.R
+import com.kalyani.shewale.shoplyapplication.ui.components.AppText
 import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,9 +112,8 @@ fun HomeScreen(
 
             if (filtered.isEmpty()) {
                 item {
-                    Text(
+                    AppText(
                         text = stringResource(R.string.home_no_results),
-                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
