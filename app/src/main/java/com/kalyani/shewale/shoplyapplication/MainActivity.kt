@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.kalyani.shewale.shoplyapplication.navigation.AppNavGraph
 import com.kalyani.shewale.shoplyapplication.ui.screen.LoginScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.RegisterScreen
 import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
@@ -23,7 +24,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShoplyApplicationTheme {
                // LoginScreen(errorMessage = stringResource(R.string.error_login_failed))
-                RegisterScreen()
+              //  RegisterScreen()
+                AppNavGraph()
             }
         }
     }

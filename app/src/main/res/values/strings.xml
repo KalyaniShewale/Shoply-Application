@@ -41,4 +41,8 @@
     <string name="register_have_account">Already have an account?</string>
     <string name="register_log_in">Log in</string>
     <string name="back">Back</string>
+
+    <!-- Home -->
+    <string name="home_placeholder">Home screen</string>
+    <string name="home_logout">Log out</string>
 </resources>
