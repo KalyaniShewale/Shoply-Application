@@ -45,4 +45,23 @@
     <!-- Home -->
     <string name="home_placeholder">Home screen</string>
     <string name="home_logout">Log out</string>
+    <string name="home_title">Shoply</string>
+    <string name="home_search_hint">Search products</string>
+    <string name="home_clear_search">Clear search</string>
+    <string name="home_category_all">All</string>
+    <string name="home_latest">Latest products</string>
+    <string name="home_recommended">Recommended</string>
+    <string name="home_no_results">No products found</string>
+
+    <!-- Product -->
+    <string name="price_format">$%1$.2f</string>
+    <string name="product_image">Product image</string>
+    <string name="favorite_add">Add to favorites</string>
+    <string name="favorite_remove">Remove from favorites</string>
+
+    <!-- Product details -->
+    <string name="details_title">Product details</string>
+    <string name="details_sold_by">Sold by</string>
+    <string name="details_call">Call seller</string>
+    <string name="details_not_found">Product not found</string>
 </resources>

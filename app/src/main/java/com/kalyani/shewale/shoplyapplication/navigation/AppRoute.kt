@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface AppRoute {
 
+    @Serializable data class ProductDetails(val productId: String) : AppRoute
+
     @Serializable
     data object Login : AppRoute
     @Serializable

@@ -10,6 +10,7 @@ kotlin = "2.2.10"
 composeBom = "2026.02.01"
 navigationCompose = "2.8.2"
 kotlinxSerializationJson = "1.7.3"
+playServicesAnalyticsImpl = "18.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +30,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+play-services-analytics-impl = { group = "com.google.android.gms", name = "play-services-analytics-impl", version.ref = "playServicesAnalyticsImpl" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
