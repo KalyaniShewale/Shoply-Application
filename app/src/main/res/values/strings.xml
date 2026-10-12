@@ -64,4 +64,29 @@
     <string name="details_sold_by">Sold by</string>
     <string name="details_call">Call seller</string>
     <string name="details_not_found">Product not found</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_saved_banner">Saved on this device</string>
+    <string name="favorites_empty_title">No favorites yet</string>
+    <string name="favorites_empty_message">Save products you like and they\'ll show up here.</string>
+    <string name="favorites_browse">Browse products</string>
+
+    <!-- Upload -->
+    <string name="upload_title">Upload product</string>
+    <string name="upload_photos_label">Photos (minimum %1$d)</string>
+    <string name="upload_photos_count">%1$d of %2$d</string>
+    <string name="upload_add_photo">Add photo</string>
+    <string name="upload_remove_photo">Remove photo</string>
+    <string name="upload_name_label">Title</string>
+    <string name="upload_category_label">Category</string>
+    <string name="upload_description_label">Description</string>
+    <string name="upload_description_hint">Describe the condition and what\'s included</string>
+    <string name="upload_price_label">Price</string>
+    <string name="upload_button">Upload product</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_upload">Upload</string>
 </resources>

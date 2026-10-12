@@ -17,6 +17,13 @@ import com.kalyani.shewale.shoplyapplication.ui.screen.HomeScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.LoginScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.ProductDetailsScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.RegisterScreen
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.kalyani.shewale.shoplyapplication.ui.screen.FavoritesScreen
+import com.kalyani.shewale.shoplyapplication.ui.screen.UploadScreen
 
 @Composable
 fun AppNavGraph(
@@ -25,73 +32,115 @@ fun AppNavGraph(
     startDestination: AppRoute = AppRoute.Home
 ) {
     val favoriteIds = remember { mutableStateListOf<String>() }
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+    val showBottomBar = bottomNavItems.any { currentDestination.isRoute(it.route) }
+
+    fun navigateToTab(route: AppRoute) {
+        navController.navigate(route) {
+            popUpTo<AppRoute.Home> { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     fun toggleFavorite(productId: String) {
         if (!favoriteIds.remove(productId)) favoriteIds.add(productId)
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-        modifier = modifier
-    ) {
-
-        composable<AppRoute.Login> {
-            LoginScreen(
-                // Firebase login need to replaces this
-                onLoginClick = { _, _ ->
-                    navController.navigate(AppRoute.Home) {
-                        popUpTo<AppRoute.Login> { inclusive = true }
-                    }
-                },
-                onRegisterClick = {
-                    navController.navigate(AppRoute.Register) {
-                        launchSingleTop = true
-                    }
-                }
-            )
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            if (showBottomBar) {
+                AppBottomBar(
+                    currentDestination = currentDestination,
+                    onItemClick = { route -> navigateToTab(route) }
+                )
+            }
         }
-
-        composable<AppRoute.Register> {
-            RegisterScreen(
-                // Firebase register need to replaces this
-                onRegisterClick = { _, _, _, _ ->
-                    navController.navigate(AppRoute.Home) {
-                        popUpTo<AppRoute.Login> { inclusive = true }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = Modifier
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding)
+        ) {
+            composable<AppRoute.Login> {
+                LoginScreen(
+                    // Firebase login need to replaces this
+                    onLoginClick = { _, _ ->
+                        navController.navigate(AppRoute.Home) {
+                            popUpTo<AppRoute.Login> { inclusive = true }
+                        }
+                    },
+                    onRegisterClick = {
+                        navController.navigate(AppRoute.Register) {
+                            launchSingleTop = true
+                        }
                     }
-                },
-                onBackClick = { navController.popBackStack() },
-                onLoginClick = { navController.popBackStack() }
-            )
-        }
+                )
+            }
 
-        composable<AppRoute.Home> {
-            HomeScreen(
-                favoriteIds = favoriteIds,
-                onProductClick = { productId ->
-                    navController.navigate(AppRoute.ProductDetails(productId))
-                },
-                onFavoriteClick = { productId -> toggleFavorite(productId) },
-                onLogoutClick = {
-                    navController.navigate(AppRoute.Login) {
-                        popUpTo<AppRoute.Home> { inclusive = true }
+            composable<AppRoute.Register> {
+                RegisterScreen(
+                    // Firebase register need to replaces this
+                    onRegisterClick = { _, _, _, _ ->
+                        navController.navigate(AppRoute.Home) {
+                            popUpTo<AppRoute.Login> { inclusive = true }
+                        }
+                    },
+                    onBackClick = { navController.popBackStack() },
+                    onLoginClick = { navController.popBackStack() }
+                )
+            }
+
+            composable<AppRoute.Home> {
+                HomeScreen(
+                    favoriteIds = favoriteIds,
+                    onProductClick = { productId ->
+                        navController.navigate(AppRoute.ProductDetails(productId))
+                    },
+                    onFavoriteClick = { productId -> toggleFavorite(productId) },
+                    onLogoutClick = {
+                        navController.navigate(AppRoute.Login) {
+                            popUpTo<AppRoute.Home> { inclusive = true }
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
 
-        composable<AppRoute.ProductDetails> { backStackEntry ->
-            val args = backStackEntry.toRoute<AppRoute.ProductDetails>()
-            val context = LocalContext.current
+            composable<AppRoute.Favorites> {
+                FavoritesScreen(
+                    products = favoriteIds.mapNotNull { SampleData.findById(it) },
+                    onProductClick = { productId ->
+                        navController.navigate(AppRoute.ProductDetails(productId))
+                    },
+                    onRemoveFavoriteClick = { productId -> toggleFavorite(productId) },
+                    onBrowseClick = { navigateToTab(AppRoute.Home) }
+                )
+            }
 
-            ProductDetailsScreen(
-                product = SampleData.findById(args.productId),
-                isFavorite = args.productId in favoriteIds,
-                onBackClick = { navController.popBackStack() },
-                onFavoriteClick = { toggleFavorite(args.productId) },
-                onCallClick = { phone ->
-                    context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
-                }
-            )
+            composable<AppRoute.Upload> {
+                UploadScreen(
+                    onUploadClick = { navigateToTab(AppRoute.Home) }
+                )
+            }
+
+            composable<AppRoute.ProductDetails> { backStackEntry ->
+                val args = backStackEntry.toRoute<AppRoute.ProductDetails>()
+                val context = LocalContext.current
+
+                ProductDetailsScreen(
+                    product = SampleData.findById(args.productId),
+                    isFavorite = args.productId in favoriteIds,
+                    onBackClick = { navController.popBackStack() },
+                    onFavoriteClick = { toggleFavorite(args.productId) },
+                    onCallClick = { phone ->
+                        context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
+                    }
+                )
+            }
         }
     }
 }
