@@ -89,4 +89,14 @@
     <string name="nav_home">Home</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_upload">Upload</string>
+
+    <!-- Auth errors from Firebase -->
+    <string name="auth_error_invalid_credentials">Email or password is incorrect.</string>
+    <string name="auth_error_invalid_email">Enter a valid email address.</string>
+    <string name="auth_error_email_in_use">This email is already registered.</string>
+    <string name="auth_error_weak_password">Password is too weak. Use at least 6 characters.</string>
+    <string name="auth_error_network">No internet connection. Check your network and try again.</string>
+    <string name="auth_error_too_many_requests">Too many attempts. Please try again later.</string>
+    <string name="auth_error_unknown">Something went wrong. Please try again.</string>
+
 </resources>

@@ -20,16 +20,23 @@ import com.kalyani.shewale.shoplyapplication.ui.screen.RegisterScreen
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.kalyani.shewale.shoplyapplication.auth.AuthEvent
 import com.kalyani.shewale.shoplyapplication.ui.screen.FavoritesScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.UploadScreen
+import com.kalyani.shewale.shoplyapplication.viewmodel.LoginViewModel
+import com.kalyani.shewale.shoplyapplication.viewmodel.RegisterViewModel
 
 @Composable
 fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: AppRoute = AppRoute.Home
+    startDestination: AppRoute = AppRoute.Login
 ) {
     val favoriteIds = remember { mutableStateListOf<String>() }
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -67,28 +74,49 @@ fun AppNavGraph(
                 .consumeWindowInsets(innerPadding)
         ) {
             composable<AppRoute.Login> {
+                val viewModel: LoginViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+                // Listens for the one-time "go to Home" event
+                LaunchedEffect(Unit) {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            AuthEvent.NavigateToHome -> navController.navigate(AppRoute.Home) {
+                                popUpTo<AppRoute.Login> { inclusive = true }
+                            }
+                        }
+                    }
+                }
+
                 LoginScreen(
-                    // Firebase login need to replaces this
-                    onLoginClick = { _, _ ->
-                        navController.navigate(AppRoute.Home) {
-                            popUpTo<AppRoute.Login> { inclusive = true }
-                        }
-                    },
+                    isLoading = uiState.isLoading,
+                    errorMessage = uiState.errorMessage?.let { stringResource(it) },
+                    onLoginClick = { email, password -> viewModel.login(email, password) },
                     onRegisterClick = {
-                        navController.navigate(AppRoute.Register) {
-                            launchSingleTop = true
-                        }
+                        navController.navigate(AppRoute.Register) { launchSingleTop = true }
                     }
                 )
             }
 
             composable<AppRoute.Register> {
-                RegisterScreen(
-                    // Firebase register need to replaces this
-                    onRegisterClick = { _, _, _, _ ->
-                        navController.navigate(AppRoute.Home) {
-                            popUpTo<AppRoute.Login> { inclusive = true }
+                val viewModel: RegisterViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+                LaunchedEffect(Unit) {
+                    viewModel.events.collect { event ->
+                        when (event) {
+                            AuthEvent.NavigateToHome -> navController.navigate(AppRoute.Home) {
+                                popUpTo<AppRoute.Login> { inclusive = true }
+                            }
                         }
+                    }
+                }
+
+                RegisterScreen(
+                    isLoading = uiState.isLoading,
+                    errorMessage = uiState.errorMessage?.let { stringResource(it) },
+                    onRegisterClick = { name, email, phone, password ->
+                        viewModel.register(name, email, phone, password)
                     },
                     onBackClick = { navController.popBackStack() },
                     onLoginClick = { navController.popBackStack() }

@@ -30,16 +30,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TEMPORARY test:
-        lifecycleScope.launch {
-            val result = registerUseCase("Test User 2", "test2@shoply.com", "+911234567891", "123456")
-            Log.d("AuthCheck 222222", result.toString())
-        }
-
-        lifecycleScope.launch {
-            val result = loginUseCase("test1@shoply.com", "123456")
-            Log.d("AuthCheck 111", result.toString())
-        }
+//        // TEMPORARY test:
+//        lifecycleScope.launch {
+//            val result = registerUseCase("Test User 2", "test2@shoply.com", "+911234567891", "123456")
+//            Log.d("AuthCheck 222222", result.toString())
+//        }
+//
+//        lifecycleScope.launch {
+//            val result = loginUseCase("test1@shoply.com", "123456")
+//            Log.d("AuthCheck 111", result.toString())
+//        }
 
         enableEdgeToEdge()
         setContent {
