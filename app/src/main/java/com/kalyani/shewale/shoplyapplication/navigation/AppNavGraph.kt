@@ -31,12 +31,14 @@ import com.kalyani.shewale.shoplyapplication.ui.screen.FavoritesScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.UploadScreen
 import com.kalyani.shewale.shoplyapplication.viewmodel.LoginViewModel
 import com.kalyani.shewale.shoplyapplication.viewmodel.RegisterViewModel
+import com.kalyani.shewale.shoplyapplication.viewmodel.SessionViewModel
 
 @Composable
 fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: AppRoute = AppRoute.Login
+    sessionViewModel: SessionViewModel = hiltViewModel(),
+    startDestination: AppRoute = sessionViewModel.startDestination
 ) {
     val favoriteIds = remember { mutableStateListOf<String>() }
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -131,6 +133,7 @@ fun AppNavGraph(
                     },
                     onFavoriteClick = { productId -> toggleFavorite(productId) },
                     onLogoutClick = {
+                        sessionViewModel.logout()
                         navController.navigate(AppRoute.Login) {
                             popUpTo<AppRoute.Home> { inclusive = true }
                         }
