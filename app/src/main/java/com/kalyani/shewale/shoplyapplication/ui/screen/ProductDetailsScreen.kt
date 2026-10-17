@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kalyani.shewale.shoplyapplication.R
 import com.kalyani.shewale.shoplyapplication.model.Product
-import com.kalyani.shewale.shoplyapplication.model.SampleData
 import com.kalyani.shewale.shoplyapplication.ui.components.AppText
 import com.kalyani.shewale.shoplyapplication.ui.components.BodyText
 import com.kalyani.shewale.shoplyapplication.ui.components.CaptionText
@@ -39,6 +38,7 @@ import com.kalyani.shewale.shoplyapplication.ui.components.PrimaryButton
 import com.kalyani.shewale.shoplyapplication.ui.components.SellerCard
 import com.kalyani.shewale.shoplyapplication.ui.components.TitleText
 import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
+import androidx.compose.material3.CircularProgressIndicator
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,6 +46,8 @@ import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
 fun ProductDetailsScreen(
     product: Product?,
     isFavorite: Boolean,
+    isLoading: Boolean = false,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onFavoriteClick: () -> Unit = {},
@@ -96,11 +98,15 @@ fun ProductDetailsScreen(
                     .padding(innerPadding),
                 contentAlignment = Alignment.Center
             ) {
-                AppText(
-                    text = stringResource(R.string.details_not_found),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    AppText(
+                        text = errorMessage ?: stringResource(R.string.details_not_found),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         } else {
             Column(
@@ -142,6 +148,6 @@ fun ProductDetailsScreen(
 @Composable
 private fun ProductDetailsPreview() {
     ShoplyApplicationTheme {
-        ProductDetailsScreen(product = SampleData.products.first(), isFavorite = false)
+
     }
 }

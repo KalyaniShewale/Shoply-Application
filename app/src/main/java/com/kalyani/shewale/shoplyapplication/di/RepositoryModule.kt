@@ -2,6 +2,8 @@ package com.kalyani.shewale.shoplyapplication.di
 
 import com.kalyani.shewale.shoplyapplication.repository.AuthRepository
 import com.kalyani.shewale.shoplyapplication.repository.AuthRepositoryImpl
+import com.kalyani.shewale.shoplyapplication.repository.ProductRepository
+import com.kalyani.shewale.shoplyapplication.repository.ProductRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,4 +17,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProductRepository(impl: ProductRepositoryImpl): ProductRepository
 }

@@ -99,4 +99,8 @@
     <string name="auth_error_too_many_requests">Too many attempts. Please try again later.</string>
     <string name="auth_error_unknown">Something went wrong. Please try again.</string>
 
+    <string name="recommended_load_error">Couldn\'t load recommended products. Check your connection.</string>
+    <string name="recommended_retry">Try again</string>
+    <string name="details_load_error">Couldn\'t load this product. Check your connection.</string>
+
 </resources>

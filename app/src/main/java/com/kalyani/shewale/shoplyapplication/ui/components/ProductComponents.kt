@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,15 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.kalyani.shewale.shoplyapplication.R
 import com.kalyani.shewale.shoplyapplication.model.Product
 
-
-@Suppress("UNUSED_PARAMETER")
 @Composable
 fun ProductImage(
     imageUrl: String?,
@@ -44,12 +43,21 @@ fun ProductImage(
             .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
+        // The icon shows while the image loads, or when there is no web URL
         Icon(
             imageVector = Icons.Outlined.Image,
-            contentDescription = stringResource(R.string.product_image),
+            contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(32.dp)
         )
+        if (imageUrl != null && imageUrl.startsWith("http")) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = stringResource(R.string.product_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

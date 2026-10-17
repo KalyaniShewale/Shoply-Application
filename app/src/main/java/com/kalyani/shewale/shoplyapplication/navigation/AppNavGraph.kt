@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.kalyani.shewale.shoplyapplication.model.SampleData
 import com.kalyani.shewale.shoplyapplication.ui.screen.HomeScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.LoginScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.ProductDetailsScreen
@@ -32,6 +31,8 @@ import com.kalyani.shewale.shoplyapplication.ui.screen.UploadScreen
 import com.kalyani.shewale.shoplyapplication.viewmodel.LoginViewModel
 import com.kalyani.shewale.shoplyapplication.viewmodel.RegisterViewModel
 import com.kalyani.shewale.shoplyapplication.viewmodel.SessionViewModel
+import com.kalyani.shewale.shoplyapplication.viewmodel.HomeViewModel
+import com.kalyani.shewale.shoplyapplication.viewmodel.ProductDetailsViewModel
 
 @Composable
 fun AppNavGraph(
@@ -126,8 +127,15 @@ fun AppNavGraph(
             }
 
             composable<AppRoute.Home> {
+                val viewModel: HomeViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
                 HomeScreen(
+                    uiState = uiState,
                     favoriteIds = favoriteIds,
+                    onQueryChange = viewModel::onQueryChange,
+                    onCategorySelected = viewModel::onCategorySelected,
+                    onRetryClick = viewModel::loadProducts,
                     onProductClick = { productId ->
                         navController.navigate(AppRoute.ProductDetails(productId))
                     },
@@ -143,7 +151,7 @@ fun AppNavGraph(
 
             composable<AppRoute.Favorites> {
                 FavoritesScreen(
-                    products = favoriteIds.mapNotNull { SampleData.findById(it) },
+                    products = emptyList(),
                     onProductClick = { productId ->
                         navController.navigate(AppRoute.ProductDetails(productId))
                     },
@@ -160,10 +168,15 @@ fun AppNavGraph(
 
             composable<AppRoute.ProductDetails> { backStackEntry ->
                 val args = backStackEntry.toRoute<AppRoute.ProductDetails>()
+                val viewModel: ProductDetailsViewModel = hiltViewModel()
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val context = LocalContext.current
 
                 ProductDetailsScreen(
-                    product = SampleData.findById(args.productId),
+                    product = uiState.product,
+                    isLoading = uiState.isLoading,
+                    errorMessage = uiState.errorMessage?.let { stringResource(it) },
+                    // TEMPORARY: favorites come from Room in the next step
                     isFavorite = args.productId in favoriteIds,
                     onBackClick = { navController.popBackStack() },
                     onFavoriteClick = { toggleFavorite(args.productId) },

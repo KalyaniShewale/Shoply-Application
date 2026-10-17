@@ -1,10 +1,8 @@
 package com.kalyani.shewale.shoplyapplication.ui.screen
 
 import com.kalyani.shewale.shoplyapplication.model.Product
-import com.kalyani.shewale.shoplyapplication.model.SampleData
 import com.kalyani.shewale.shoplyapplication.ui.components.CategoryChips
 import com.kalyani.shewale.shoplyapplication.ui.components.ProductCard
-import com.kalyani.shewale.shoplyapplication.ui.components.RecommendedCard
 import com.kalyani.shewale.shoplyapplication.ui.components.SearchField
 import com.kalyani.shewale.shoplyapplication.ui.components.SectionHeader
 import androidx.compose.foundation.layout.Arrangement
@@ -38,33 +36,28 @@ import com.kalyani.shewale.shoplyapplication.R
 import com.kalyani.shewale.shoplyapplication.ui.components.AppText
 import com.kalyani.shewale.shoplyapplication.ui.theme.ShoplyApplicationTheme
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
+import com.kalyani.shewale.shoplyapplication.model.Seller
+import com.kalyani.shewale.shoplyapplication.usecase.HomeUiState
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    products: List<Product> = SampleData.products,
-    recommended: List<Product> = SampleData.recommended,
+    uiState: HomeUiState = HomeUiState(),
     favoriteIds: List<String> = emptyList(),
+    onQueryChange: (String) -> Unit = {},
+    onCategorySelected: (String?) -> Unit = {},
+    onRetryClick: () -> Unit = {},
     onProductClick: (productId: String) -> Unit = {},
     onFavoriteClick: (productId: String) -> Unit = {},
     onLogoutClick: () -> Unit = {}
 ) {
-    var query by rememberSaveable { mutableStateOf("") }
-    var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
-
-    val categories = remember(products) { products.map { it.category }.distinct() }
-    // to check No Product found condition
-    //val products: List<Product> = emptyList()
-    val filtered = remember(products, query, selectedCategory) {
-        products.filter { product ->
-            val matchesCategory = selectedCategory == null || product.category == selectedCategory
-            val matchesQuery = query.isBlank() ||
-                    product.title.contains(query.trim(), ignoreCase = true) ||
-                    product.description.contains(query.trim(), ignoreCase = true)
-            matchesCategory && matchesQuery
-        }
-    }
-
+    val filtered = uiState.filteredProducts
 
     Scaffold(
         modifier = modifier,
@@ -94,51 +87,63 @@ fun HomeScreen(
         ) {
             item {
                 SearchField(
-                    value = query,
-                    onValueChange = { query = it },
+                    value = uiState.query,
+                    onValueChange = onQueryChange,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
             item {
                 CategoryChips(
-                    categories = categories,
-                    selected = selectedCategory,
-                    onSelected = { selectedCategory = it }
+                    categories = uiState.categories,
+                    selected = uiState.selectedCategory,
+                    onSelected = onCategorySelected
                 )
             }
 
             item { SectionHeader(stringResource(R.string.home_latest)) }
 
-            if (filtered.isEmpty()) {
-                item {
+            when {
+                uiState.isLoading -> item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                uiState.errorMessage != null -> item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AppText(
+                            text = stringResource(uiState.errorMessage),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        TextButton(onClick = onRetryClick) {
+                            Text(stringResource(R.string.recommended_retry))
+                        }
+                    }
+                }
+
+                filtered.isEmpty() -> item {
                     AppText(
                         text = stringResource(R.string.home_no_results),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            } else {
-                items(filtered, key = { it.id }) { product ->
+
+                else -> items(filtered, key = { it.id }) { product ->
                     ProductCard(
                         product = product,
                         isFavorite = product.id in favoriteIds,
                         onClick = { onProductClick(product.id) },
                         onFavoriteClick = { onFavoriteClick(product.id) }
                     )
-                }
-            }
-
-            if (recommended.isNotEmpty()) {
-                item { SectionHeader(stringResource(R.string.home_recommended)) }
-                item {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(recommended, key = { it.id }) { product ->
-                            RecommendedCard(
-                                product = product,
-                                onClick = { onProductClick(product.id) }
-                            )
-                        }
-                    }
                 }
             }
         }
@@ -148,5 +153,27 @@ fun HomeScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun HomeScreenPreview() {
-    ShoplyApplicationTheme { HomeScreen(favoriteIds = listOf("2")) }
+    ShoplyApplicationTheme {
+        HomeScreen(
+            uiState = HomeUiState(isLoading = false, products = PreviewData.products),
+            favoriteIds = listOf("2")
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun HomeScreenLoadingPreview() {
+    ShoplyApplicationTheme { HomeScreen(uiState = HomeUiState(isLoading = true)) }
+}
+
+
+object PreviewData {
+    val products = listOf(
+        Product("1", "Fjallraven Backpack", "Your perfect pack for everyday use and walks in the forest.", 109.95, "Men's clothing", listOf(""),
+            Seller("Alex Morgan", "+447700900123", "alex@email.com")
+        ),
+        Product("2", "Slim Fit T-Shirt", "Slim fitting style, contrast raglan long sleeve, three button henley placket.", 22.3, "Men's clothing", listOf("")),
+        Product("3", "Gold Bracelet", "From our Legends Collection, inspired by the mythical water dragon.", 695.0, "Jewelery", listOf(""))
+    )
 }

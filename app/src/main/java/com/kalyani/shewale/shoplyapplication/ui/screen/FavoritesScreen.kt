@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kalyani.shewale.shoplyapplication.R
 import com.kalyani.shewale.shoplyapplication.model.Product
-import com.kalyani.shewale.shoplyapplication.model.SampleData
 import com.kalyani.shewale.shoplyapplication.ui.components.EmptyState
 import com.kalyani.shewale.shoplyapplication.ui.components.InfoBanner
 import com.kalyani.shewale.shoplyapplication.ui.components.ProductCard
@@ -85,7 +84,7 @@ fun FavoritesScreen(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun FavoritesScreenPreview() {
-    ShoplyApplicationTheme { FavoritesScreen(products = SampleData.products.take(3)) }
+    ShoplyApplicationTheme {  }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
