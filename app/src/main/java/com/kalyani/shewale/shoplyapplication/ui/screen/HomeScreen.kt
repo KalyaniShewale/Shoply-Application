@@ -54,7 +54,7 @@ fun HomeScreen(
     onCategorySelected: (String?) -> Unit = {},
     onRetryClick: () -> Unit = {},
     onProductClick: (productId: String) -> Unit = {},
-    onFavoriteClick: (productId: String) -> Unit = {},
+    onFavoriteClick: (product: Product) -> Unit = {},
     onLogoutClick: () -> Unit = {}
 ) {
     val filtered = uiState.filteredProducts
@@ -142,7 +142,7 @@ fun HomeScreen(
                         product = product,
                         isFavorite = product.id in favoriteIds,
                         onClick = { onProductClick(product.id) },
-                        onFavoriteClick = { onFavoriteClick(product.id) }
+                        onFavoriteClick = { onFavoriteClick(product) }
                     )
                 }
             }

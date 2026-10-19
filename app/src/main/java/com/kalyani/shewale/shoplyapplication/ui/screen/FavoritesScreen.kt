@@ -31,7 +31,7 @@ fun FavoritesScreen(
     products: List<Product>,
     modifier: Modifier = Modifier,
     onProductClick: (productId: String) -> Unit = {},
-    onRemoveFavoriteClick: (productId: String) -> Unit = {},
+    onRemoveFavoriteClick: (product: Product) -> Unit = {},
     onBrowseClick: () -> Unit = {}
 ) {
     Scaffold(
@@ -73,7 +73,7 @@ fun FavoritesScreen(
                         product = product,
                         isFavorite = true,
                         onClick = { onProductClick(product.id) },
-                        onFavoriteClick = { onRemoveFavoriteClick(product.id) }
+                        onFavoriteClick = { onRemoveFavoriteClick(product) }
                     )
                 }
             }

@@ -1,9 +1,11 @@
 package com.kalyani.shewale.shoplyapplication.di
 
+import com.kalyani.shewale.shoplyapplication.repository.FavoriteRepository
 import com.kalyani.shewale.shoplyapplication.repository.AuthRepository
 import com.kalyani.shewale.shoplyapplication.repository.AuthRepositoryImpl
 import com.kalyani.shewale.shoplyapplication.repository.ProductRepository
 import com.kalyani.shewale.shoplyapplication.repository.ProductRepositoryImpl
+import com.kalyani.shewale.shoplyapplication.repository.FavoriteRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,6 +15,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteRepository(impl: FavoriteRepositoryImpl): FavoriteRepository
 
     @Binds
     @Singleton

@@ -3,7 +3,6 @@ package com.kalyani.shewale.shoplyapplication.navigation
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kalyani.shewale.shoplyapplication.auth.AuthEvent
+import com.kalyani.shewale.shoplyapplication.viewmodel.FavoritesViewModel
 import com.kalyani.shewale.shoplyapplication.ui.screen.FavoritesScreen
 import com.kalyani.shewale.shoplyapplication.ui.screen.UploadScreen
 import com.kalyani.shewale.shoplyapplication.viewmodel.LoginViewModel
@@ -41,7 +41,12 @@ fun AppNavGraph(
     sessionViewModel: SessionViewModel = hiltViewModel(),
     startDestination: AppRoute = sessionViewModel.startDestination
 ) {
-    val favoriteIds = remember { mutableStateListOf<String>() }
+
+    // Favorites live in Room. One ViewModel is shared by Home, Favorites and Details.
+    val favoritesViewModel: FavoritesViewModel = hiltViewModel()
+    val favorites by favoritesViewModel.favorites.collectAsStateWithLifecycle()
+    val favoriteIds = remember(favorites) { favorites.map { it.id } }
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val showBottomBar = bottomNavItems.any { currentDestination.isRoute(it.route) }
@@ -52,10 +57,6 @@ fun AppNavGraph(
             launchSingleTop = true
             restoreState = true
         }
-    }
-
-    fun toggleFavorite(productId: String) {
-        if (!favoriteIds.remove(productId)) favoriteIds.add(productId)
     }
 
     Scaffold(
@@ -139,7 +140,7 @@ fun AppNavGraph(
                     onProductClick = { productId ->
                         navController.navigate(AppRoute.ProductDetails(productId))
                     },
-                    onFavoriteClick = { productId -> toggleFavorite(productId) },
+                    onFavoriteClick = { productId -> favoritesViewModel.toggle(productId) },
                     onLogoutClick = {
                         sessionViewModel.logout()
                         navController.navigate(AppRoute.Login) {
@@ -151,11 +152,11 @@ fun AppNavGraph(
 
             composable<AppRoute.Favorites> {
                 FavoritesScreen(
-                    products = emptyList(),
+                    products = favorites,
                     onProductClick = { productId ->
                         navController.navigate(AppRoute.ProductDetails(productId))
                     },
-                    onRemoveFavoriteClick = { productId -> toggleFavorite(productId) },
+                    onRemoveFavoriteClick = { product -> favoritesViewModel.toggle(product) },
                     onBrowseClick = { navigateToTab(AppRoute.Home) }
                 )
             }
@@ -176,10 +177,9 @@ fun AppNavGraph(
                     product = uiState.product,
                     isLoading = uiState.isLoading,
                     errorMessage = uiState.errorMessage?.let { stringResource(it) },
-                    // TEMPORARY: favorites come from Room in the next step
                     isFavorite = args.productId in favoriteIds,
+                    onFavoriteClick = { uiState.product?.let { favoritesViewModel.toggle(product = it) } },
                     onBackClick = { navController.popBackStack() },
-                    onFavoriteClick = { toggleFavorite(args.productId) },
                     onCallClick = { phone ->
                         context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone")))
                     }
