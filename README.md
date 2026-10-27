@@ -84,4 +84,4 @@ Each data source has its own small class that matches its format (`FakeStoreProd
 
 Kalyani Shewale
 
-Built as a TuteDude assignment.
+
